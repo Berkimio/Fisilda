@@ -125,7 +125,7 @@
                 showStatus('Giriş başarılı! Ana sayfaya yönlendiriliyorsunuz.', 'success');
 
                 setTimeout(() => {
-                    window.location.href = 'https://berkimio.github.io/Fisilda/Pages/Anasayfa.html';
+                    window.location.href = 'Fisilda/Pages/Anasayfa.html';
                 }, 2000);
 
             } catch (error) {
@@ -180,7 +180,7 @@
                     document.getElementById('auth-status').textContent = 'Bu kullanıcı silinmiş. Lütfen giriş yapın.';
                     return;
                 }
-                window.location.href = 'AnaSayfa.html';
+                window.location.href = 'Fisilda/Pages/Anasayfa.html';
             } else {
                 document.getElementById('auth-status').textContent = 'Authentication bağlantısı başarılı. Lütfen giriş yapın.';
             }
@@ -188,5 +188,6 @@
     </script>
 </body>
 </html>
+
 
 
