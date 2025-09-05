@@ -169,11 +169,14 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script type="module">
-    // Firebase modüllerini import et
+  <script type="module">
+// Firebase App ve modüller
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, doc, setDoc, getDocs, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { 
+    getFirestore, collection, doc, setDoc, getDocs, query, where, orderBy, 
+    onSnapshot, serverTimestamp, Timestamp, deleteDoc 
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 // Firebase yapılandırması
 const firebaseConfig = {
@@ -196,14 +199,13 @@ let activeChatUID = null;
 let activeChatName = null;
 let messagesUnsubscribe = null;
 
-// Hata ayıklama panelini toggle et
+// Hata ayıklama paneli
 document.getElementById('debug-btn').addEventListener('click', () => {
     const debugPanel = document.getElementById('debug-panel');
     debugPanel.style.display = debugPanel.style.display === 'block' ? 'none' : 'block';
     updateDebugInfo('Hata ayıklama paneli açıldı.');
 });
 
-// Hata ayıklama bilgilerini güncelle
 function updateDebugInfo(message) {
     const debugContent = document.getElementById('debug-content');
     debugContent.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${message}</div>`;
@@ -216,8 +218,6 @@ onAuthStateChanged(auth, (user) => {
         currentUser = user;
         updateDebugInfo(`Kullanıcı giriş yaptı: ${user.uid}`);
         loadUserList();
-
-        // Mesaj inputunu aktif et
         document.getElementById('message-input').disabled = false;
         document.querySelector('.welcome-message').style.display = 'flex';
     } else {
@@ -231,9 +231,7 @@ onAuthStateChanged(auth, (user) => {
 document.getElementById('refresh-btn').addEventListener('click', () => {
     updateDebugInfo('Sayfa yenileniyor...');
     loadUserList();
-    if (activeChatUID) {
-        listenMessages();
-    }
+    if (activeChatUID) listenMessages();
 });
 
 // Çıkış butonu
@@ -248,21 +246,17 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
     }
 });
 
-// Kullanıcı listesini yükleme
+// Kullanıcı listesi
 async function loadUserList() {
     try {
         updateDebugInfo('Kullanıcı listesi yükleniyor...');
-
         const usersSnapshot = await getDocs(collection(db, "users"));
         const conversationList = document.getElementById('conversation-list');
 
         if (usersSnapshot.empty) {
-            conversationList.innerHTML = `
-                <div style="text-align: center; padding: 20px; color: #777;">
-                    <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                    <p>Henüz hiç kullanıcı bulunamadı</p>
-                </div>
-            `;
+            conversationList.innerHTML = `<div style="text-align:center;padding:20px;color:#777;">
+                <i class="fas fa-users" style="font-size:2rem;margin-bottom:10px;"></i>
+                <p>Henüz hiç kullanıcı bulunamadı</p></div>`;
             updateDebugInfo('Kullanıcı koleksiyonu boş.');
             return;
         }
@@ -273,13 +267,11 @@ async function loadUserList() {
         usersSnapshot.forEach(docSnap => {
             const userData = docSnap.data();
             if (userData.uid === currentUser.uid) return;
-
             hasOtherUsers = true;
 
             const item = document.createElement('div');
             item.className = 'conversation-item';
             item.dataset.uid = userData.uid;
-
             item.innerHTML = `
                 <div class="avatar">${userData.fullname?.charAt(0) || 'K'}</div>
                 <div class="conversation-info">
@@ -288,63 +280,46 @@ async function loadUserList() {
                 </div>
                 <div class="conversation-meta">
                     <div class="timestamp"></div>
-                </div>
-            `;
-
+                </div>`;
+            
             item.addEventListener('click', () => {
                 openChat(userData.uid, userData.fullname);
-                // Mobilde sohbet açıldığında sidebar'ı kapat
                 if (window.innerWidth <= 768) {
                     document.querySelector('.sidebar').classList.remove('active');
                     document.querySelector('.overlay').classList.remove('active');
                 }
             });
+
             conversationList.appendChild(item);
         });
 
         if (!hasOtherUsers) {
-            conversationList.innerHTML = `
-                <div style="text-align: center; padding: 20px; color: #777;">
-                    <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                    <p>Henüz başka kullanıcı bulunamadı</p>
-                </div>
-            `;
+            conversationList.innerHTML = `<div style="text-align:center;padding:20px;color:#777;">
+                <i class="fas fa-users" style="font-size:2rem;margin-bottom:10px;"></i>
+                <p>Henüz başka kullanıcı bulunamadı</p></div>`;
             updateDebugInfo('Başka kullanıcı bulunamadı.');
         } else {
             updateDebugInfo('Kullanıcı listesi başarıyla yüklendi.');
             loadLastMessages();
         }
-
     } catch (error) {
         console.error("Kullanıcı listesi yüklenemedi:", error);
         updateDebugInfo(`Kullanıcı listesi hatası: ${error.message}`);
     }
 }
 
-// Son mesajları yükle
+// Son mesajlar
 async function loadLastMessages() {
     try {
-        const messagesQuery = query(
-            collection(db, "messages"),
-            orderBy("timestamp", "desc")
-        );
-
-        onSnapshot(messagesQuery, (snapshot) => {
+        const messagesQuery = query(collection(db, "messages"), orderBy("timestamp", "desc"));
+        onSnapshot(messagesQuery, snapshot => {
             const lastMessages = {};
-
             snapshot.forEach(docSnap => {
                 const data = docSnap.data();
-
-                // Sadece sen ve diğer kişi arasında mesaj varsa
                 if (data.sender === currentUser.uid || data.receiver === currentUser.uid) {
                     const otherUser = data.sender === currentUser.uid ? data.receiver : data.sender;
-
                     if (!lastMessages[otherUser]) {
-                        lastMessages[otherUser] = {
-                            text: data.text,
-                            timestamp: data.timestamp,
-                            isSender: data.sender === currentUser.uid
-                        };
+                        lastMessages[otherUser] = { text: data.text, timestamp: data.timestamp, isSender: data.sender === currentUser.uid };
                     }
                 }
             });
@@ -352,13 +327,10 @@ async function loadLastMessages() {
             document.querySelectorAll('.conversation-item').forEach(item => {
                 const uid = item.dataset.uid;
                 const lastMessage = lastMessages[uid];
-
                 if (lastMessage) {
                     const lastMessageEl = item.querySelector('.last-message');
                     const timestampEl = item.querySelector('.timestamp');
-
                     lastMessageEl.textContent = lastMessage.isSender ? `Sen: ${lastMessage.text}` : lastMessage.text;
-
                     if (lastMessage.timestamp && lastMessage.timestamp.seconds) {
                         const date = new Date(lastMessage.timestamp.seconds * 1000);
                         timestampEl.textContent = formatTime(date);
@@ -366,7 +338,6 @@ async function loadLastMessages() {
                 }
             });
         });
-
     } catch (error) {
         console.error("Son mesajlar yüklenemedi:", error);
         updateDebugInfo(`Son mesajlar hatası: ${error.message}`);
@@ -377,30 +348,21 @@ async function loadLastMessages() {
 function formatTime(date) {
     const now = new Date();
     const diff = now - date;
-
     if (diff < 60000) return 'şimdi';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)} dk`;
-    if (diff < 86400000) return date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-
-    return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
+    if (diff < 3600000) return `${Math.floor(diff/60000)} dk`;
+    if (diff < 86400000) return date.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+    return date.toLocaleDateString('tr-TR',{day:'numeric',month:'short'});
 }
 
 // Chat açma
 function openChat(uid, name) {
     if (messagesUnsubscribe) messagesUnsubscribe();
-
     activeChatUID = uid;
     activeChatName = name;
-
-    const headerName = document.getElementById('current-chat-name');
-    const avatar = document.getElementById('current-chat-avatar');
-
-    headerName.textContent = name;
-    avatar.textContent = name.charAt(0);
-
+    document.getElementById('current-chat-name').textContent = name;
+    document.getElementById('current-chat-avatar').textContent = name.charAt(0);
     document.getElementById('current-chat-status').textContent = 'çevrimiçi';
     document.getElementById('send-btn').disabled = false;
-
     updateDebugInfo(`${name} ile sohbet açıldı.`);
     listenMessages();
 }
@@ -409,155 +371,143 @@ function openChat(uid, name) {
 async function sendMessage() {
     const messageInput = document.getElementById('message-input');
     const messageText = messageInput.value.trim();
-
     if (!messageText || !activeChatUID) return;
 
     const timestamp = Date.now();
     const docId = `${currentUser.uid}_${activeChatUID}_${timestamp}`;
-
     try {
-        await setDoc(doc(db, "messages", docId), {
+        await setDoc(doc(db,"messages",docId),{
             sender: currentUser.uid,
             receiver: activeChatUID,
             text: messageText,
-            timestamp: serverTimestamp()
+            timestamp: serverTimestamp(),
+            expireAt: Timestamp.fromDate(new Date(Date.now() + 7*24*60*60*1000))
         });
-
         messageInput.value = '';
         updateDebugInfo(`Mesaj gönderildi: ${messageText}`);
-    } catch (error) {
+    } catch(error) {
         console.error("Mesaj gönderilemedi:", error.message);
         updateDebugInfo(`Mesaj gönderme hatası: ${error.message}`);
     }
 }
 
-// Gerçek zamanlı mesaj dinleme
-// Gerçek zamanlı mesaj dinleme (indeks istemez)
+// Mesajları dinleme
 function listenMessages() {
     if (!activeChatUID) return;
-
     const messagesContainer = document.getElementById('messages-container');
     messagesContainer.innerHTML = '<div class="message-loading"><i class="fas fa-spinner fa-spin"></i> Mesajlar yükleniyor...</div>';
-
     updateDebugInfo(`Mesajlar dinleniyor: ${currentUser.uid} ve ${activeChatUID}`);
+    const messagesQuery = query(collection(db,"messages"),orderBy("timestamp","asc"));
 
-    // Tüm mesajları timestamp'e göre sırala
-    const messagesQuery = query(collection(db, "messages"), orderBy("timestamp", "asc"));
-
-    // Önceki dinleyiciyi temizle ve yeni dinleyiciyi kaydet
     if (messagesUnsubscribe) messagesUnsubscribe();
+    messagesUnsubscribe = onSnapshot(messagesQuery, snapshot => {
+        const filteredMessages = snapshot.docs.filter(docSnap => {
+            const data = docSnap.data();
+            return (data.sender===currentUser.uid && data.receiver===activeChatUID) ||
+                   (data.sender===activeChatUID && data.receiver===currentUser.uid);
+        });
 
-    messagesUnsubscribe = onSnapshot(messagesQuery,
-        (snapshot) => {
-            const filteredMessages = snapshot.docs.filter(docSnap => {
-                const data = docSnap.data();
-                return (data.sender === currentUser.uid && data.receiver === activeChatUID) ||
-                       (data.sender === activeChatUID && data.receiver === currentUser.uid);
-            });
-
-            messagesContainer.innerHTML = '';
-
-            if (filteredMessages.length === 0) {
-                messagesContainer.innerHTML = `
-                    <div class="message-error">
-                        <i class="fas fa-comment-slash"></i>
-                        <p>Henüz mesaj yok</p>
-                        <p>İlk mesajı sen gönder!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            filteredMessages.forEach(docSnap => {
-                const data = docSnap.data();
-                const div = document.createElement('div');
-                div.className = data.sender === currentUser.uid ? 'message-sent' : 'message-received';
-
-                let timestamp = new Date();
-                if (data.timestamp && data.timestamp.seconds) {
-                    timestamp = new Date(data.timestamp.seconds * 1000);
-                }
-
-                div.innerHTML = `
-                    <div class="message-content">
-                        <div class="message-text">${data.text || ''}</div>
-                        <div class="message-time">${formatTime(timestamp)}</div>
-                    </div>
-                `;
-
-                messagesContainer.appendChild(div);
-            });
-
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        },
-        (error) => {
-            console.error("Mesajlar dinlenirken hata oluştu:", error);
-            updateDebugInfo(`Mesaj dinleme hatası: ${error.message}`);
-            messagesContainer.innerHTML = `
-                <div class="message-error">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <p>Mesajlar yüklenirken hata oluştu</p>
-                    <button class="retry-button" onclick="listenMessages()">Tekrar Dene</button>
-                </div>
-            `;
+        messagesContainer.innerHTML = '';
+        if (filteredMessages.length===0){
+            messagesContainer.innerHTML = `<div class="message-error">
+                <i class="fas fa-comment-slash"></i>
+                <p>Henüz mesaj yok</p><p>İlk mesajı sen gönder!</p></div>`;
+            return;
         }
-    );
+
+        filteredMessages.forEach(docSnap=>{
+            const data = docSnap.data();
+            const div = document.createElement('div');
+            div.className = data.sender===currentUser.uid?'message-sent':'message-received';
+            let timestamp = new Date();
+            if(data.timestamp && data.timestamp.seconds) timestamp = new Date(data.timestamp.seconds*1000);
+            div.innerHTML = `<div class="message-content">
+                <div class="message-text">${data.text||''}</div>
+                <div class="message-time">${formatTime(timestamp)}</div>
+            </div>`;
+            messagesContainer.appendChild(div);
+        });
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }, error=>{
+        console.error("Mesajlar dinlenirken hata oluştu:",error);
+        updateDebugInfo(`Mesaj dinleme hatası: ${error.message}`);
+        messagesContainer.innerHTML = `<div class="message-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Mesajlar yüklenirken hata oluştu</p>
+            <button class="retry-button" onclick="listenMessages()">Tekrar Dene</button>
+        </div>`;
+    });
 }
 
 // Event listenerlar
-document.getElementById('send-btn').addEventListener('click', sendMessage);
-document.getElementById('message-input').addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+document.getElementById('send-btn').addEventListener('click',sendMessage);
+document.getElementById('message-input').addEventListener('keypress',e=>{if(e.key==='Enter') sendMessage();});
 
-// Buton hover efektleri
-document.querySelectorAll('button').forEach(button => {
-    button.addEventListener('mouseenter', () => { button.style.transform = 'translateY(-2px)'; });
-    button.addEventListener('mouseleave', () => { button.style.transform = ''; });
+// Hover efektleri
+document.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('mouseenter',()=>{btn.style.transform='translateY(-2px)';});
+    btn.addEventListener('mouseleave',()=>{btn.style.transform='';});
 });
 
-// Sayfa kapatılırken dinleyicileri temizle
-window.addEventListener('beforeunload', () => { if (messagesUnsubscribe) messagesUnsubscribe(); });
+// Sayfa kapatılırken dinleyici temizle
+window.addEventListener('beforeunload',()=>{if(messagesUnsubscribe) messagesUnsubscribe();});
 
-// Responsive menü işlevselliği
-document.addEventListener('DOMContentLoaded', function() {
-    const menuToggle = document.querySelector('.menu-toggle');
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.querySelector('.overlay');
-    const backButton = document.querySelector('.back-button');
-    
-    if (menuToggle && sidebar) {
-        menuToggle.addEventListener('click', function() {
+// Responsive menü
+document.addEventListener('DOMContentLoaded',function(){
+    const menuToggle=document.querySelector('.menu-toggle');
+    const sidebar=document.querySelector('.sidebar');
+    const overlay=document.querySelector('.overlay');
+    const backButton=document.querySelector('.back-button');
+
+    if(menuToggle && sidebar){
+        menuToggle.addEventListener('click',()=> {
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
-            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+            document.body.style.overflow=sidebar.classList.contains('active')?'hidden':'';
         });
     }
-    
-    if (overlay) {
-        overlay.addEventListener('click', function() {
+
+    if(overlay){
+        overlay.addEventListener('click',()=> {
             sidebar.classList.remove('active');
             overlay.classList.remove('active');
-            document.body.style.overflow = '';
+            document.body.style.overflow='';
         });
     }
-    
-    if (backButton) {
-        backButton.addEventListener('click', function() {
-            // Mobilde sohbetten konuşma listesine dönme işlevi
-            if (window.innerWidth <= 768) {
+
+    if(backButton){
+        backButton.addEventListener('click',()=>{
+            if(window.innerWidth<=768){
                 sidebar.classList.add('active');
                 overlay.classList.add('active');
             }
         });
     }
-    
-    // Pencere boyutu değiştiğinde sidebar'ı kontrol et
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
+
+    window.addEventListener('resize',()=>{
+        if(window.innerWidth>768){
             sidebar.classList.remove('active');
-            if (overlay) overlay.classList.remove('active');
-            document.body.style.overflow = '';
+            if(overlay) overlay.classList.remove('active');
+            document.body.style.overflow='';
         }
     });
 });
-    </script>
+
+// 7 gün geçmiş mesajları silme
+async function deleteExpiredMessages(){
+    const now=new Date();
+    const messagesRef=collection(db,"messages");
+    const q=query(messagesRef,where("expireAt","<=",now));
+    const querySnapshot=await getDocs(q);
+    querySnapshot.forEach(async docSnap=>{
+        await deleteDoc(doc(db,"messages",docSnap.id));
+        updateDebugInfo(`Mesaj otomatik silindi: ${docSnap.id}`);
+    });
+}
+
+// Sayfa açılırken ve her 10 dakikada bir kontrol
+deleteExpiredMessages();
+setInterval(deleteExpiredMessages,10*60*1000);
+</script>
+
 </body>
