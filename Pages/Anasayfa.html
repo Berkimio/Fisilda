@@ -75,17 +75,21 @@
             margin-top: 5px;
         }
     </style>
+    
 </head>
 <body>
     <!-- Header -->
     <div class="header">
+        <button class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
         <div class="logo">
             <i class="fas fa-comments"></i>
             <h1>Fısılda</h1>
         </div>
         <div class="user-actions">
             <button class="icon-btn" id="debug-btn" title="Hata Ayıklama">
-                <i class="fas fa-bug"></i>
+                <i style="display: none;" class="fas fa-bug"></i>
             </button>
             <button class="icon-btn" id="refresh-btn" title="Yenile">
                 <i class="fas fa-sync-alt"></i>
@@ -95,6 +99,9 @@
             </button>
         </div>
     </div>
+    
+    <!-- Overlay (mobil menü için) -->
+    <div style="" class="overlay"></div>
     
     <!-- Main Container -->
     <div class="main-container">
@@ -115,10 +122,16 @@
         <!-- Chat Area -->
         <div class="chat-area">
             <div class="chat-header">
-                <div class="current-chat-user">
-                    <div class="avatar" id="current-chat-avatar"></div>
-                    <div>
-                        <div class="conversation-name" id="current-chat-name">Bir sohbet seçin</div>
+                <button class="icon-btn back-button">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="chat-info">
+                    <div class="avatar-container">
+                        <div class="avatar" id="current-chat-avatar"></div>
+                        <div class="online-status"></div>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="current-chat-name">Bir sohbet seçin</div>
                         <div class="user-status">
                             <span class="status-dot"></span>
                             <span id="current-chat-status">çevrimdışı</span>
@@ -278,7 +291,14 @@ async function loadUserList() {
                 </div>
             `;
 
-            item.addEventListener('click', () => openChat(userData.uid, userData.fullname));
+            item.addEventListener('click', () => {
+                openChat(userData.uid, userData.fullname);
+                // Mobilde sohbet açıldığında sidebar'ı kapat
+                if (window.innerWidth <= 768) {
+                    document.querySelector('.sidebar').classList.remove('active');
+                    document.querySelector('.overlay').classList.remove('active');
+                }
+            });
             conversationList.appendChild(item);
         });
 
@@ -497,8 +517,47 @@ document.querySelectorAll('button').forEach(button => {
 // Sayfa kapatılırken dinleyicileri temizle
 window.addEventListener('beforeunload', () => { if (messagesUnsubscribe) messagesUnsubscribe(); });
 
+// Responsive menü işlevselliği
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.overlay');
+    const backButton = document.querySelector('.back-button');
+    
+    if (menuToggle && sidebar) {
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        });
+    }
+    
+    if (overlay) {
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    }
+    
+    if (backButton) {
+        backButton.addEventListener('click', function() {
+            // Mobilde sohbetten konuşma listesine dönme işlevi
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+            }
+        });
+    }
+    
+    // Pencere boyutu değiştiğinde sidebar'ı kontrol et
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            sidebar.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+});
     </script>
 </body>
-
-</html>
-
