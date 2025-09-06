@@ -268,7 +268,7 @@
                 showStatus('Giriş başarılı! Ana sayfaya yönlendiriliyorsunuz.', 'success');
 
                 setTimeout(() => {
-                    window.location.href = 'AnaSayfa.html';
+                    window.location.href = 'Anasayfa.html';
                 }, 2000);
 
             } catch (error) {
@@ -325,7 +325,7 @@
                     document.getElementById('auth-status').textContent = 'Bu kullanıcı silinmiş. Lütfen giriş yapın.';
                     return;
                 }
-                window.location.href = 'AnaSayfa.html';
+                     window.location.href = 'Anasayfa.html';
             } else {
                 document.getElementById('auth-status').textContent = 
                     'Authentication bağlantısı başarılı. Lütfen giriş yapın.';
@@ -344,4 +344,5 @@
     </script>
     <script src="Guard.js"></script>
 </body>
+
 </html>
