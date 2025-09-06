@@ -115,7 +115,7 @@
         <div id="status-message" class="status-message"></div>
         
         <div class="signup-link">
-            Hesabın yok mu? <a href="kayıt.html">Hemen kaydol</a>
+            Hesabın yok mu? <a href="Kayıt.html">Hemen kaydol</a>
         </div>
         
         <button style="display: none;" id="toggle-debug"></button>
@@ -268,7 +268,7 @@
                 showStatus('Giriş başarılı! Ana sayfaya yönlendiriliyorsunuz.', 'success');
 
                 setTimeout(() => {
-                    window.location.href = 'Anasayfa.html';
+                    window.location.href = 'AnaSayfa.html';
                 }, 2000);
 
             } catch (error) {
@@ -325,7 +325,7 @@
                     document.getElementById('auth-status').textContent = 'Bu kullanıcı silinmiş. Lütfen giriş yapın.';
                     return;
                 }
-                     window.location.href = 'Anasayfa.html';
+                window.location.href = 'Anasayfa.html';
             } else {
                 document.getElementById('auth-status').textContent = 
                     'Authentication bağlantısı başarılı. Lütfen giriş yapın.';
@@ -344,5 +344,4 @@
     </script>
     <script src="Guard.js"></script>
 </body>
-
 </html>
