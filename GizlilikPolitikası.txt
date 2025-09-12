@@ -1,1 +1,77 @@
-Sonra Yazarım Çok Merak Ettiysen Yaz İg Berkimio
+Fısılda Gizlilik Politikası
+
+Geçerlilik Tarihi: 12 Eylül 2025
+
+1. Toplanan Bilgiler
+
+Fısılda, kullanıcı deneyimini geliştirmek ve hizmetleri güvenli şekilde sunmak için bazı bilgileri toplar:
+
+Hesap ve kullanım bilgileri:
+
+Hesap oluşturma zamanı (createdAt)
+
+Son giriş zamanı (lastLogin)
+
+Son çevrimiçi görülme (lastSeen)
+
+Çevrimiçi durumu (online)
+
+Tercihler (preferences) – Tema, bildirimler vb.
+
+Kayıt ve cihaz bilgileri:
+
+IP adresi
+
+Dil tercihi
+
+Platform (iOS, Android, Web)
+
+Ekran çözünürlüğü
+
+Zaman damgası
+
+Saat dilimi
+
+User agent bilgisi
+
+Not: Kullanıcı e-posta ve tam ad gibi kişisel bilgileri paylaşmadığı sürece toplanmaz.
+
+2. Verilerin Kullanım Amaçları
+
+Toplanan veriler şu amaçlarla kullanılır:
+
+Hesap yönetimi ve doğrulama
+
+Kullanıcı deneyimini iyileştirme (tema, bildirimler vb.)
+
+Teknik destek ve hataların tespiti
+
+Güvenlik ve kötüye kullanımın önlenmesi
+
+3. Verilerin Paylaşımı
+
+Fısılda, kullanıcı bilgilerini üçüncü kişilerle paylaşabilir. Ancak hukuki zorunluluk durumunda veya kötüye kullanım tespitinde yetkili mercilere bilgi verilebilir.
+
+4. Çerezler ve Benzer Teknolojiler
+
+Fısılda, uygulama performansını ve deneyimi iyileştirmek için çerez veya benzer teknolojiler kullanabilir. Bu bilgiler cihazınıza kaydedilir ve yalnızca uygulama içi kullanım amaçlıdır.
+
+5. Kullanıcı Hakları
+
+Kullanıcılar, verileri hakkında şu haklara sahiptir:
+
+Hesap bilgilerine erişim talep etme
+
+Bilgilerin düzeltilmesini veya silinmesini isteme
+
+Veri toplama ve kullanım hakkında destek alma
+
+Bunlar için [https://www.instagram.com/berkimio/] adresine başvurabilirsiniz.
+
+6. Veri Güvenliği
+
+Fısılda, kullanıcı verilerini korumak için teknik ve idari önlemler uygular. Ancak internet üzerinden veri iletiminde tam güvenlik garanti edilemez.
+
+7. Değişiklikler
+
+Fısılda, gizlilik politikasını zaman zaman güncelleyebilir. Güncellemeler uygulama içinde veya web sitesinde duyurulur.
