@@ -1,1 +1,79 @@
-Kullanım Koşullarımız Şunlar Yani İnsan Olun Bide Biraz Zeki Olun Yeter
+Fısılda Kullanım Koşulları ve Gizlilik Politikası
+
+Geçerlilik Tarihi: 12 Eylül 2025
+
+1. Genel Bilgiler
+
+Fısılda, kullanıcıların güvenli ve keyifli bir şekilde anlık mesajlaşmasını sağlayan bir uygulamadır. Uygulamayı kullanarak, bu koşulları kabul etmiş sayılırsınız.
+
+2. Toplanan Bilgiler
+
+Fısılda, kullanıcı deneyimini geliştirmek ve hizmetleri düzgün sağlamak için bazı bilgileri toplar. Toplanan bilgiler şunlardır:
+
+Zorunlu Bilgiler:
+
+createdAt (hesap oluşturma tarihi)
+
+lastLogin (son giriş zamanı)
+
+lastSeen (son çevrimiçi görülme)
+
+online durumu (çevrimiçi/çevrimdışı)
+
+preferences (tercihler, örneğin tema ve bildirimler)
+
+Kayıt ve cihaz bilgileri:
+
+registrationData içinde;
+
+IP adresi
+
+Dil tercihi
+
+Kullanılan platform (iOS, Android, Web)
+
+Ekran çözünürlüğü
+
+Zaman damgası
+
+Saat dilimi
+
+User agent bilgisi
+
+3. Kullanım Şartları
+
+Fısılda’yı kullanırken yasadışı veya zararlı içerik paylaşmayacaksınız.
+
+Başka kullanıcıların haklarına saygı göstereceksiniz.
+
+Hesap güvenliğinizden siz sorumlusunuz; kullanıcı adı ve şifre bilgilerinizi kimseyle paylaşmayın.
+
+4. Veri Kullanımı
+
+Toplanan bilgiler şu amaçlarla kullanılabilir:
+
+Hesap yönetimi ve doğrulama
+
+Kullanıcı deneyimini iyileştirme (tema, bildirim tercihleri vb.)
+
+Teknik destek ve hataların tespiti
+
+Güvenlik ve kötüye kullanımı önleme
+
+Not: E-posta ve isim gibi kişisel bilgiler kullanıcı tarafından sağlanmadığı sürece toplanmaz.
+
+5. Veri Paylaşımı
+
+Fısılda, kullanıcı bilgilerini üçüncü kişilerle Paylaşabilir. Ancak hukuki zorunluluk durumunda veya kötüye kullanım tespitinde gerekli mercilere bilgi verilebilir.
+
+6. Kullanıcı Hakları
+
+Hesap bilgilerinize erişim talep edebilirsiniz.
+
+Bilgilerinizin düzeltilmesini veya silinmesini isteyebilirsiniz.
+
+Veri toplama ve kullanım hakkında sorularınızı [https://www.instagram.com/berkimio] adresine iletebilirsiniz.
+
+7. Değişiklikler
+
+Fısılda, bu kullanım koşullarını ve gizlilik politikasını zaman zaman güncelleyebilir. Güncellemeler uygulama içinde veya web sitesinde duyurulur.
