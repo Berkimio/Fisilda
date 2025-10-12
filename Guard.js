@@ -472,4 +472,3 @@ document.addEventListener('DOMContentLoaded', function() {
         _0xa0v1w2.classList.remove('active');
     });
 })();
-
