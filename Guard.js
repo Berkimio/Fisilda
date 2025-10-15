@@ -2,14 +2,14 @@
 document.onkeydown = function (e) {
     // Büyük/küçük harf farkı olmadan kontrol
     const key = e.key.toLowerCase();
-
+/*
     if (
         e.keyCode === 123 || // F12
         (e.ctrlKey && e.shiftKey && key === 'i') || // Ctrl+Shift+I
         (e.ctrlKey && e.shiftKey && key === 'j') || // Ctrl+Shift+J
         (e.ctrlKey && key === 'u') || // Ctrl+U
         (e.ctrlKey && key === 's') || // Ctrl+S
-        (e.ctrlKey && key === '') || // Ctrl+C
+        (e.ctrlKey && key === 'c') || // Ctrl+C
         (e.ctrlKey && key === 'v') || // Ctrl+V
         (e.ctrlKey && key === 'x') || // Ctrl+X
         (e.ctrlKey && key === 'p') || // Ctrl+P
@@ -20,7 +20,7 @@ document.onkeydown = function (e) {
         return false;
     }
 };
-
+*/
 // Sağ tık menüsünü engelle
 document.addEventListener('contextmenu', e => e.preventDefault());
 
@@ -58,4 +58,5 @@ document.addEventListener('beforeprint', function (e) {
     alert("Yazdırma Kullanmak yasaktır!");
     e.preventDefault();
 });
+
 
