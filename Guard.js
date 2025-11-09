@@ -2,7 +2,7 @@
 document.onkeydown = function (e) {
     // Büyük/küçük harf farkı olmadan kontrol
     const key = e.key.toLowerCase();
-/*
+
     if (
         e.keyCode === 123 || // F12
         (e.ctrlKey && e.shiftKey && key === 'i') || // Ctrl+Shift+I
@@ -20,7 +20,7 @@ document.onkeydown = function (e) {
         return false;
     }
 };
-*/
+
 // Sağ tık menüsünü engelle
 document.addEventListener('contextmenu', e => e.preventDefault());
 
@@ -58,5 +58,6 @@ document.addEventListener('beforeprint', function (e) {
     alert("Yazdırma Kullanmak yasaktır!");
     e.preventDefault();
 });
+
 
 
